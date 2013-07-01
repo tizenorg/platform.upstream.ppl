@@ -7,6 +7,7 @@ Url:            http://www.cs.unipr.it/ppl/
 Group:          Development/Libraries/C and C++
 Source:         ppl-%{version}.tar.bz2
 Source1:        baselibs.conf
+Source1001: 	ppl.manifest
 BuildRequires:  gcc-c++
 BuildRequires:  gmp-devel >= 4.1.3
 
@@ -69,6 +70,7 @@ want to program with the PPL.
 
 %prep
 %setup -q -n ppl-%{version}
+cp %{SOURCE1001} .
 
 %build
 %configure --enable-shared --with-pic --disable-rpath \
@@ -103,6 +105,7 @@ rm -Rf %{buildroot}%{_datadir}/doc/%{name}/ppl-user-java-interface-%{version}*
 %postun -n libppl_c -p /sbin/ldconfig
 
 %files
+%manifest %{name}.manifest
 %defattr(-,root,root,-)
 %dir %{_datadir}/doc/%{name}
 %doc %{_datadir}/doc/%{name}/BUGS
@@ -116,14 +119,17 @@ rm -Rf %{buildroot}%{_datadir}/doc/%{name}/ppl-user-java-interface-%{version}*
 %{_mandir}/man1/ppl_pips.1.gz
 
 %files -n libppl
+%manifest %{name}.manifest
 %defattr(-,root,root,-)
 %{_libdir}/libppl.so.*
 
 %files -n libppl_c
+%manifest %{name}.manifest
 %defattr(-,root,root,-)
 %{_libdir}/libppl_c.so.*
 
 %files devel
+%manifest %{name}.manifest
 %defattr(-,root,root,-)
 %doc %{_datadir}/doc/%{name}/README.configure
 %{_includedir}/ppl.hh
@@ -139,6 +145,7 @@ rm -Rf %{buildroot}%{_datadir}/doc/%{name}/ppl-user-java-interface-%{version}*
 %{_datadir}/aclocal/ppl_c.m4
 
 %files devel-static
+%manifest %{name}.manifest
 %defattr(-,root,root,-)
 %{_libdir}/libppl.a
 %{_libdir}/libppl.la
@@ -146,6 +153,7 @@ rm -Rf %{buildroot}%{_datadir}/doc/%{name}/ppl-user-java-interface-%{version}*
 %{_libdir}/libppl_c.la
 
 %files doc
+%manifest %{name}.manifest
 %defattr(-,root,root,-)
 %doc %{_datadir}/doc/%{name}/README.doc
 %doc %{_datadir}/doc/%{name}/fdl.txt
