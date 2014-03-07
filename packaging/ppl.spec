@@ -1,5 +1,5 @@
 Name:           ppl
-Version:        0.11.2
+Version:        1.1
 Release:        0
 License:        GPL-3.0+
 Summary:        The Parma Polyhedra Library
@@ -9,7 +9,7 @@ Source:         ppl-%{version}.tar.bz2
 Source1:        baselibs.conf
 Source1001: 	ppl.manifest
 BuildRequires:  gcc-c++
-BuildRequires:  gmp-devel >= 4.1.3
+BuildRequires:  pkgconfig(gmp) >= 5.1
 
 %description
 The Parma Polyhedra Library (PPL) is a library for the manipulation of
@@ -27,7 +27,7 @@ through its C and C++ interfaces.
 %package devel
 Summary:        Development tools for the Parma Polyhedra Library C and C++ interfaces
 Group:          Development/Libraries/C and C++
-Requires:       gmp-devel >= 4.1.3
+Requires:       pkgconfig(gmp) >= 5.1
 Requires:       libppl = %{version}
 Requires:       libppl_c = %{version}
 
@@ -73,28 +73,31 @@ want to program with the PPL.
 cp %{SOURCE1001} .
 
 %build
-%configure --enable-shared --with-pic --disable-rpath \
+%reconfigure --enable-shared --with-pic --disable-rpath \
 	--disable-watchdog
 #sed -i 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g' libtool
 #sed -i 's|^runpath_var=LD_RUN_PATH|runpath_var=DIE_RPATH_DIE|g' libtool
 make %{?_smp_mflags}
 
+#cd doc
+#make user-html
+
 %install
-make DESTDIR=%{buildroot} INSTALL="install -p" install
+make DESTDIR=%{buildroot} INSTALL="install -p" install-exec
+
+for DIR in utils src tests interfaces demos m4; do
+ make -C ${DIR} DESTDIR=%{buildroot} INSTALL="install -p"  install-data
+done
+
+make -C doc DESTDIR=%{buildroot} INSTALL="install -p" install-txt
+make -C doc DESTDIR=%{buildroot} INSTALL="install -p" install-man
+
 # We don't build the binary, so delete its manpage
 rm -f %{buildroot}%{_mandir}/man1/ppl_lpsol.1
-# We don't build pwl
-rm -Rf %{buildroot}%{_datadir}/doc/pwl
-# The pdf is enough
-rm -f %{buildroot}%{_datadir}/doc/%{name}/ppl-user-*.ps.gz
+
 rm -f %{buildroot}%{_datadir}/doc/%{name}/ChangeLog
 rm -f %{buildroot}%{_datadir}/doc/%{name}/TODO
 rm -f %{buildroot}%{_datadir}/doc/%{name}/gpl.*
-rm -f %{buildroot}%{_datadir}/doc/%{name}/fdl.ps.gz
-rm -f %{buildroot}%{_datadir}/doc/%{name}/fdl.pdf
-rm -Rf %{buildroot}%{_datadir}/doc/%{name}/ppl-user-prolog-interface-%{version}*
-rm -Rf %{buildroot}%{_datadir}/doc/%{name}/ppl-user-ocaml-interface-%{version}*
-rm -Rf %{buildroot}%{_datadir}/doc/%{name}/ppl-user-java-interface-%{version}*
 
 %post -n libppl -p /sbin/ldconfig
 
@@ -157,7 +160,3 @@ rm -Rf %{buildroot}%{_datadir}/doc/%{name}/ppl-user-java-interface-%{version}*
 %defattr(-,root,root,-)
 %doc %{_datadir}/doc/%{name}/README.doc
 %doc %{_datadir}/doc/%{name}/fdl.txt
-%doc %{_datadir}/doc/%{name}/ppl-user-%{version}-html/
-%doc %{_datadir}/doc/%{name}/ppl-user-c-interface-%{version}-html/
-%doc %{_datadir}/doc/%{name}/ppl-user-%{version}.pdf
-%doc %{_datadir}/doc/%{name}/ppl-user-c-interface-%{version}.pdf
