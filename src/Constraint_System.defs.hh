@@ -33,6 +33,7 @@ site: http://www.cs.unipr.it/ppl/ . */
 #include "Congruence_System.types.hh"
 #include <iterator>
 #include <iosfwd>
+#include <cstddef>
 
 namespace Parma_Polyhedra_Library {
 
@@ -204,7 +205,7 @@ public:
   class const_iterator
     : public std::iterator<std::forward_iterator_tag,
 			   Constraint,
-			   ptrdiff_t,
+			   std::ptrdiff_t,
 			   const Constraint*,
 			   const Constraint&> {
   public:

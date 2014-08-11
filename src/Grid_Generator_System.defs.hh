@@ -30,6 +30,7 @@ site: http://www.cs.unipr.it/ppl/ . */
 #include "Variables_Set.types.hh"
 #include "Grid.types.hh"
 #include <iosfwd>
+#include <cstddef>
 
 namespace Parma_Polyhedra_Library {
 
@@ -267,7 +268,7 @@ public:
   class const_iterator
     : public std::iterator<std::forward_iterator_tag,
 			   Grid_Generator,
-			   ptrdiff_t,
+			   std::ptrdiff_t,
 			   const Grid_Generator*,
 			   const Grid_Generator&>,
       private Generator_System::const_iterator {
